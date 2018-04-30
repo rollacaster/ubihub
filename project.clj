@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.10.238"]
                  [cider/piggieback "0.3.1"]
-                 [figwheel-sidecar "0.5.16-SNAPSHOT"]]
+                 [figwheel-sidecar "0.5.16-SNAPSHOT"]
+                 [reagent "0.8.0"]]
   :plugins [[lein-figwheel "0.5.16-SNAPSHOT"]]
   :main ^:skip-aot shopping-list.core
   :target-path "target/%s"
