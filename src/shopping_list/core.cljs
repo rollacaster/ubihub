@@ -1,5 +1,9 @@
 (ns shopping-list.core
-  (:require [reagent.core :as reagent :refer [atom]]))
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [reagent.core :as reagent :refer [atom]]
+            [cljs-http.client :as http]
+            [cljs.core.async :refer [<! chan]]
+            [cljs.reader :refer [read-string]]))
 
 (enable-console-print!)
 ;; -------------------------
@@ -27,30 +31,36 @@
 
 ;; -------------------------
 ;; Actions
-;; (go (let [response (<! (http/get "http://localhost:3449/shopping-list"
-;;                                  {:with-credentials? false}))]
-;;       (println (read-string (:body response)))
-;;       (reset! app-db (:body response))))
+(go (let [response (<! (http/get "/shopping-list"
+                                 {:with-credentials? false}))]
+      (reset! app-db (:body response))))
+
 
 (defn add-item
   [goodId]
-  ;; (http/post "http://localhost:3449/shopping-list" {:edn-params {:goodId goodId}})
-  (swap! app-db #(assoc % :shopping-list (conj (:shopping-list %) (hash-map (str (random-uuid)) {:quantity 1 :good goodId})))))
+  (go (let [res (<! (http/post "/shopping-list"
+                               {:edn-params {:goodId goodId}
+                                :with-credentials? false}))]
+      (reset! app-db (:body res)))))
 
 
 (defn increase-quantity
-  [id]
-  (swap! app-db #(update-in % [:shopping-list id :quantity] (comp (fn [x] (min 9 x)) inc))))
+  [goodId]
+  (go (let [res (<! (http/post (str "/shopping-list/" goodId "/increase")
+                               {:with-credentials? false}))]
+      (reset! app-db (:body res)))))
 
 (defn decrease-quantity
-  [id quantity]
-  (swap! app-db #(if (> quantity  1)
-                   (update-in % [:shopping-list id :quantity] dec)
-                   (remove-shopping-item % id))))
+  [goodId]
+  (go (let [res (<! (http/post (str "/shopping-list/" goodId "/decrease")
+                               {:with-credentials? false}))]
+      (reset! app-db (:body res)))))
 
 (defn remove-item
-  [id]
-  (swap! app-db #(remove-shopping-item % id)))
+  [goodId]
+  (go (let [res (<! (http/delete (str "/shopping-list/" goodId)
+                                 {:with-credentials? false}))]
+      (reset! app-db (:body res)))))
 
 (defn toogle-modal
   []
@@ -70,7 +80,7 @@
   [:div {:style {:display "flex" :flex-direction "column" :align-items "center"}}
    (quantity-button "🔼" #(increase-quantity id))
    [:span quantity]
-   (quantity-button "🔽" #(decrease-quantity id quantity))])
+   (quantity-button "🔽" #(decrease-quantity id))])
 
 (defn item
   [item]
