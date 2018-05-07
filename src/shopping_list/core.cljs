@@ -17,11 +17,14 @@
 
 ;; -------------------------
 ;; Queries
+(defn find-item
+  [shopping-list id]
+  (second (first (filter #(= (first %) id) shopping-list))))
 
 (defn get-item
   [app-db id]
   (let [{:keys [shopping-list goods]} app-db
-        listItem (get shopping-list id)
+        listItem (find-item shopping-list id)
         good (get goods (:good listItem))]
     (merge {:id id} (assoc listItem :good (:name good)))))
 
@@ -41,7 +44,8 @@
   (go (let [res (<! (http/post "/shopping-list"
                                {:edn-params {:goodId goodId}
                                 :with-credentials? false}))]
-      (reset! app-db (:body res)))))
+      (reset! app-db (:body res))
+      (.scrollTo js/window 0 0))))
 
 
 (defn increase-quantity
@@ -64,6 +68,11 @@
 
 (defn toogle-modal
   []
+  (let [body (.-body js/document)
+        overflow (.-overflow (.-style body))]
+    (if (= overflow "hidden")
+      (set! (.-overflow (.-style body)) "")
+      (set! (.-overflow (.-style body)) "hidden")))
   (swap! add-modal-shown? not))
 
 ;; -------------------------
@@ -71,66 +80,61 @@
 (defn quantity-button
   [label on-click]
   [:button
-    {:style {:border "none" :padding 0 :margin 0 :width 11 :outline "none"}
+    {:class "f4 dim ph3 pv2 mv2 dib ba b--mid-gray bg-white mid-gray a"
      :on-click on-click}
     label])
 
 (defn quantity-counter
   [id quantity]
-  [:div {:style {:display "flex" :flex-direction "column" :align-items "center"}}
-   (quantity-button "🔼" #(increase-quantity id))
-   [:span quantity]
-   (quantity-button "🔽" #(decrease-quantity id))])
+  [:div {:class "flex flex-column items-center"}
+   (quantity-button "+" #(increase-quantity id))
+   [:span {:class "f3 db black-70"} quantity]
+   (quantity-button "-" #(decrease-quantity id))])
 
 (defn item
   [item]
-  [:li {:key (:id item) :style {:width 150
-                                :display "flex"
-                                :justify-content "space-between"
-                                :align-items "center"
-                                :margin-bottom 20}}
-   [:div
-    [:label
-     [:input {:type "checkbox"
-              :checked false
-              :style {:margin-right 20}
-              :on-change #(remove-item (:id item))}]
-     (:good item)]]
+  [:li {:key (:id item) :class "flex items-center lh-copy pa3 bb b--black-10"}
+   [:input {:id (:id item)
+            :type "checkbox"
+            :checked false
+            :on-change #(remove-item (:id item))}]
+   [:label {:for (:id item) :class "f3 db black-70 pl3 flex-auto"} (:good item)]
    (quantity-counter (:id item) (:quantity item))])
 
 (defn add-modal
   []
   [:div
-   [:button {:style {:border "1px solid grey"}
-             :on-click toogle-modal} "➕"]
-   [:div
-    {:style {:width 500 :height 300
-             :position "absolute"
-             :top "0%"
-             :background-color :white
-             :border "1px solid grey"
-             :display (if @add-modal-shown? "flex" "none")
-             :flex-direction "column"
-             :justify-content "space-between"}}
-    [:div
-     [:h2 "Goods"]
-     [:ul {:style {:list-style "none"}}
-      (map (fn [good] [:li {:key (first good)}
-                          [:button {:on-click #(do (add-item (first good)) (toogle-modal))} (-> good second :name)]])
-           (:goods @app-db))]]
-    [:div {:style {:display "flex" :justify-content "center"}}
-     [:button {:on-click toogle-modal} "close"]]]])
+   {:class (str "w-100 vh-100 bg-white absolute flex-column justify-between ")
+    :style {:transform (str "translateX(" (if @add-modal-shown? 0 375) "px)")
+            :transition "transform 0.5s"
+            :top (.-scrollY js/window)}}
+   [:div {:class "center pa3"}
+    [:ul {:class "list ph3 pv4"}
+     (map (fn [good] [:li {:class "dib mr1 mb2"
+                           :key (first good)}
+                      [:button {:class "f4 b db pa2 dim dark-gray ba b--black-20 bg-white"
+                                :on-click #(do (add-item (first good)) (toogle-modal))} (-> good second :name)]])
+          (:goods @app-db))]]
+   [:div {:class "flex justify-center"}
+    [:button {:class "f5 pa2 mb2 ba white b--black-20 bg-black"
+              :on-click toogle-modal} "back"]]])
+
+(defn add-button
+  []
+  [:div {:style {:position "sticky"} :class "flex justify-end bottom-0 right-0 mr3"}
+   [:button {:class "f2 br-100 h3 w3 mb2 white bg-mid-gray shadow-5"
+             :on-click toogle-modal} "+"]])
 
 (defn main []
-  (let [app-db @app-db]
-    [:div {:style {:position "relative"}}
-     [:h2 "Groceries"]
-     [:ul (map (comp item #(get-item app-db (first %))) (:shopping-list app-db))]
+  (let [app-db @app-db
+        add-modal-shown? @add-modal-shown?]
+    [:div {:class (str "test " (when add-modal-shown? "m0 h-100 overflow-hidden"))}
+     [:div {:class "relative sans-serif mw5 center pa3"}
+      [:ul {:class "list pl0 mt0 measure center"}
+       (map (comp item #(get-item app-db (first %))) (:shopping-list app-db))]]
+     (add-button)
      (add-modal)]))
 
-(defn about-page []
-  [:div [:h2 "About shopping-list"]
-   [:div [:a {:href "/"} "go to the home page"]]])
 
 ;; -------------------------
 ;; Initialize app
