@@ -9,10 +9,7 @@
 ;; -------------------------
 ;; Data
 
-(defonce app-db (atom '{:goods {"8280b3f8-e14a-45d9-be46-09ffb44b8db9" {:name "Banana"}
-                            "2dd89b67-3156-4c9e-8a44-7e4523e75199" {:name "Milk"}
-                            "dbea6f63-1004-4c9c-8d28-b84c866df474" {:name "Cheese"}}
-                    :shopping-list {}}))
+(def app-db (atom {}))
 (defonce add-modal-shown? (atom false))
 
 ;; -------------------------
