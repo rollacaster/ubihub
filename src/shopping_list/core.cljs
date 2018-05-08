@@ -10,18 +10,18 @@
 ;; Data
 
 (def app-db (atom {}))
-(defonce add-modal-shown? (atom false))
+(defonce add-goods-modal-shown? (atom false))
 
 ;; -------------------------
 ;; Queries
-(defn find-item
+(defn find-shopping-item
   [shopping-list id]
   (second (first (filter #(= (first %) id) shopping-list))))
 
-(defn get-item
-  [app-db id]
+(defn get-shopping-item
+  [id app-db]
   (let [{:keys [shopping-list goods]} app-db
-        listItem (find-item shopping-list id)
+        listItem (find-shopping-item shopping-list id)
         good (get goods (:good listItem))]
     (merge {:id id} (assoc listItem :good (:name good)))))
 
@@ -40,7 +40,7 @@
       (reset! app-db (:body response))))
 
 
-(defn add-item
+(defn add-shopping-item
   [goodId]
   (go (let [res (<! (http/post "/shopping-list"
                                {:edn-params {:goodId goodId}
@@ -61,20 +61,20 @@
                                {:with-credentials? false}))]
       (reset! app-db (:body res)))))
 
-(defn remove-item
+(defn remove-shopping-item
   [goodId]
   (go (let [res (<! (http/delete (str "/shopping-list/" goodId)
                                  {:with-credentials? false}))]
       (reset! app-db (:body res)))))
 
-(defn toogle-modal
+(defn toogle-goods-modal
   []
   (let [body (.-body js/document)
         overflow (.-overflow (.-style body))]
     (if (= overflow "hidden")
       (set! (.-overflow (.-style body)) "")
       (set! (.-overflow (.-style body)) "hidden")))
-  (swap! add-modal-shown? not))
+  (swap! add-goods-modal-shown? not))
 
 ;; -------------------------
 ;; Views
@@ -92,21 +92,21 @@
    [:span {:class "f3 db black-70"} quantity]
    (quantity-button "-" #(decrease-quantity id))])
 
-(defn item
+(defn shopping-item
   [item]
   [:li {:key (:id item) :class "flex items-center lh-copy pa3 bb b--black-10"}
    [:input {:id (:id item)
             :type "checkbox"
             :checked false
-            :on-change #(remove-item (:id item))}]
+            :on-change #(remove-shopping-item (:id item))}]
    [:label {:for (:id item) :class "f3 db black-70 pl3 flex-auto"} (:good item)]
    (quantity-counter (:id item) (:quantity item))])
 
-(defn add-modal
+(defn add-goods-modal
   [goods]
   [:div
    {:class (str "w-100 vh-100 bg-white absolute flex-column justify-between ")
-    :style {:transform (str "translateX(" (if @add-modal-shown? 0 375) "px)")
+    :style {:transform (str "translateX(" (if @add-goods-modal-shown? 0 375) "px)")
             :transition "transform 0.5s"
             :top (.-scrollY js/window)}}
    [:div {:class "center pa3"}
@@ -114,29 +114,29 @@
      (map (fn [good] [:li {:class "dib mr1 mb2"
                            :key (first good)}
                       [:button {:class "f4 b db pa2 dim dark-gray ba b--black-20 bg-white"
-                                :on-click #(do (add-item (first good)) (toogle-modal))} (-> good second :name)]])
+                                :on-click #(do (add-shopping-item (first good)) (toogle-goods-modal))} (-> good second :name)]])
           goods)]]
    [:div {:class "flex justify-center"}
     [:button {:class "f5 pa2 mb2 ba white b--black-20 bg-black"
-              :on-click toogle-modal} "back"]]])
+              :on-click toogle-goods-modal} "back"]]])
 
 (defn add-button
   [goods]
   (when (> (count goods) 0)
     [:div {:style {:position "sticky"} :class "flex justify-end bottom-0 right-0 mr3"}
      [:button {:class "f2 br-100 h3 w3 mb2 white bg-mid-gray shadow-5"
-               :on-click toogle-modal} "+"]]))
+               :on-click toogle-goods-modal} "+"]]))
 
 (defn main []
   (let [app-db @app-db
-        add-modal-shown? @add-modal-shown?
+        add-goods-modal-shown? @add-goods-modal-shown?
         goods (:goods (filter-goods app-db))]
-    [:div {:class (str "test " (when add-modal-shown? "m0 h-100 overflow-hidden"))}
+    [:div {:class (str "test " (when add-goods-modal-shown? "m0 h-100 overflow-hidden"))}
      [:div {:class "relative sans-serif mw5 center pa3"}
       [:ul {:class "list pl0 mt0 measure center"}
-       (map (comp item #(get-item app-db (first %))) (:shopping-list app-db))]]
+       (map (comp shopping-item #(get-shopping-item (first %) app-db)) (:shopping-list app-db))]]
      (add-button goods)
-     (add-modal goods)]))
+     (add-goods-modal goods)]))
 
 
 ;; -------------------------

@@ -16,18 +16,18 @@
                         "2dd89b67-3156-4c9e-8a44-7e4523e75199" {:name "Milk"}
                         "dbea6f63-1004-4c9c-8d28-b84c866df474" {:name "Cheese"}}}))
 
-(defn add-item
+(defn add-shopping-item
   [goodId app-db]
   (update app-db
          :shopping-list
          #(cons (vector (str (java.util.UUID/randomUUID))
                         {:quantity 1 :good goodId}) %)))
 
-(defn remove-item
+(defn remove-shopping-item
   [id app-db]
   (update app-db :shopping-list (fn [x] (remove #(= (first %) id) x))))
 
-(defn increase-item
+(defn increase-quantity
   [id app-db]
   (update app-db :shopping-list
           (fn [x] (map (fn [item]
@@ -35,13 +35,13 @@
                            (vector id (update (second item) :quantity (comp #(min 9 %) inc)))
                            item)) x))))
 
-(defn find-item
+(defn find-shopping-item
   [id app-db]
   (first (filter #(= (first %) id) (:shopping-list app-db))))
 
-(defn decrease-item
+(defn decrease-quantity
   [id app-db]
-  (let [item (find-item id app-db)
+  (let [item (find-shopping-item id app-db)
         quantity (:quantity (second item))]
     (if (> quantity  1)
       (update app-db :shopping-list
@@ -49,7 +49,7 @@
                              (if (= (first item) id)
                                (vector id (update (second item) :quantity (comp #(min 9 %) dec)))
                                item)) x)))
-      (remove-item id app-db))))
+      (remove-shopping-item id app-db))))
 
 (defn send-edn [x]
   (-> x
@@ -61,13 +61,13 @@
   (GET "/shopping-list" []
        (-> @app-db send-edn))
   (POST "/shopping-list" [goodId]
-        (-> (swap! app-db #(add-item goodId %)) send-edn))
+        (-> (swap! app-db #(add-shopping-item goodId %)) send-edn))
   (POST "/shopping-list/:goodId/increase" [goodId]
-        (-> (swap! app-db #(increase-item goodId %)) send-edn))
+        (-> (swap! app-db #(increase-quantity goodId %)) send-edn))
   (POST "/shopping-list/:goodId/decrease" [goodId]
-        (->  (swap! app-db #(decrease-item goodId %)) send-edn))
+        (->  (swap! app-db #(decrease-quantity goodId %)) send-edn))
   (DELETE "/shopping-list/:goodId" [goodId]
-          (-> (swap! app-db #(remove-item goodId %)) send-edn))
+          (-> (swap! app-db #(remove-shopping-item goodId %)) send-edn))
   (route/not-found "<h1>Page not found</h1>"))
 
 (def app
