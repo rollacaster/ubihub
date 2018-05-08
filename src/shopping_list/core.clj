@@ -15,13 +15,11 @@
                        {"8280b3f8-e14a-45d9-be46-09ffb44b8db9" {:name "Banana"}
                         "2dd89b67-3156-4c9e-8a44-7e4523e75199" {:name "Milk"}
                         "dbea6f63-1004-4c9c-8d28-b84c866df474" {:name "Cheese"}}}))
-
 (defn add-shopping-item
-  [goodId app-db]
+  [uuid goodId app-db]
   (update app-db
          :shopping-list
-         #(cons (vector (str (java.util.UUID/randomUUID))
-                        {:quantity 1 :good goodId}) %)))
+         #(cons (vector (str uuid) {:quantity 1 :good goodId}) %)))
 
 (defn remove-shopping-item
   [id app-db]
@@ -61,7 +59,7 @@
   (GET "/shopping-list" []
        (-> @app-db send-edn))
   (POST "/shopping-list" [goodId]
-        (-> (swap! app-db #(add-shopping-item goodId %)) send-edn))
+        (-> (swap! app-db #(add-shopping-item (java.util.UUID/randomUUID) goodId %)) send-edn))
   (POST "/shopping-list/:goodId/increase" [goodId]
         (-> (swap! app-db #(increase-quantity goodId %)) send-edn))
   (POST "/shopping-list/:goodId/decrease" [goodId]
