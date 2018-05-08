@@ -25,9 +25,13 @@
         good (get goods (:good listItem))]
     (merge {:id id} (assoc listItem :good (:name good)))))
 
-(defn remove-shopping-item
-  [app-db id]
-  (merge app-db {:shopping-list (dissoc (:shopping-list app-db) id)}))
+(defn find-good
+  [goodId app-db]
+  (first (filter #(= (:good (second %)) goodId) (:shopping-list app-db))))
+
+(defn filter-goods
+  [app-db]
+  (update app-db :goods (fn [goods] (remove (fn [good] (find-good (first good) app-db)) goods))))
 
 ;; -------------------------
 ;; Actions
@@ -99,7 +103,7 @@
    (quantity-counter (:id item) (:quantity item))])
 
 (defn add-modal
-  []
+  [goods]
   [:div
    {:class (str "w-100 vh-100 bg-white absolute flex-column justify-between ")
     :style {:transform (str "translateX(" (if @add-modal-shown? 0 375) "px)")
@@ -111,26 +115,28 @@
                            :key (first good)}
                       [:button {:class "f4 b db pa2 dim dark-gray ba b--black-20 bg-white"
                                 :on-click #(do (add-item (first good)) (toogle-modal))} (-> good second :name)]])
-          (:goods @app-db))]]
+          goods)]]
    [:div {:class "flex justify-center"}
     [:button {:class "f5 pa2 mb2 ba white b--black-20 bg-black"
               :on-click toogle-modal} "back"]]])
 
 (defn add-button
-  []
-  [:div {:style {:position "sticky"} :class "flex justify-end bottom-0 right-0 mr3"}
-   [:button {:class "f2 br-100 h3 w3 mb2 white bg-mid-gray shadow-5"
-             :on-click toogle-modal} "+"]])
+  [goods]
+  (when (> (count goods) 0)
+    [:div {:style {:position "sticky"} :class "flex justify-end bottom-0 right-0 mr3"}
+     [:button {:class "f2 br-100 h3 w3 mb2 white bg-mid-gray shadow-5"
+               :on-click toogle-modal} "+"]]))
 
 (defn main []
   (let [app-db @app-db
-        add-modal-shown? @add-modal-shown?]
+        add-modal-shown? @add-modal-shown?
+        goods (:goods (filter-goods app-db))]
     [:div {:class (str "test " (when add-modal-shown? "m0 h-100 overflow-hidden"))}
      [:div {:class "relative sans-serif mw5 center pa3"}
       [:ul {:class "list pl0 mt0 measure center"}
        (map (comp item #(get-item app-db (first %))) (:shopping-list app-db))]]
-     (add-button)
-     (add-modal)]))
+     (add-button goods)
+     (add-modal goods)]))
 
 
 ;; -------------------------

@@ -34,10 +34,14 @@
                          (if (= (first item) id)
                            (vector id (update (second item) :quantity (comp #(min 9 %) inc)))
                            item)) x))))
+
+(defn find-item
+  [id app-db]
+  (first (filter #(= (first %) id) (:shopping-list app-db))))
+
 (defn decrease-item
   [id app-db]
-  (println "hi" id)
-  (let [item (first (filter #(= (first %) id) (:shopping-list app-db)))
+  (let [item (find-item id app-db)
         quantity (:quantity (second item))]
     (if (> quantity  1)
       (update app-db :shopping-list
