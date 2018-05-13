@@ -123,7 +123,7 @@
 (defn add-button
   [goods]
   (when (> (count goods) 0)
-    [:div {:style {:position "sticky"} :class "flex justify-end bottom-0 right-0 mr3"}
+    [:div {:class "fixed bottom-0 right-0 ma3"}
      [:button {:class "f2 br-100 h3 w3 mb2 white bg-mid-gray shadow-5"
                :on-click toogle-goods-modal} "+"]]))
 
@@ -131,7 +131,7 @@
   (let [app-db @app-db
         add-goods-modal-shown? @add-goods-modal-shown?
         goods (:goods (filter-goods app-db))]
-    [:div {:class (str "test " (when add-goods-modal-shown? "m0 h-100 overflow-hidden"))}
+    [:div {:class (when add-goods-modal-shown? "m0 h-100 overflow-hidden")}
      [:div {:class "relative sans-serif mw5 center pa3"}
       [:ul {:class "list pl0 mt0 measure center"}
        (map (comp shopping-item #(get-shopping-item (first %) app-db)) (:shopping-list app-db))]]
