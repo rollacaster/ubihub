@@ -9,14 +9,17 @@
                  [figwheel-sidecar "0.5.16-SNAPSHOT"]
                  [reagent "0.8.0"]
                  [ring/ring-core "1.6.3"]
+                 [ring/ring-devel "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-jetty-adapter "1.6.3"]
                  [compojure "1.6.1"]
                  [fogus/ring-edn "0.3.0"]
-                 [cljs-http "0.1.45"]]
+                 [cljs-http "0.1.45"]
+                 [http-kit "2.2.0"]]
   :plugins [[lein-figwheel "0.5.16-SNAPSHOT"]
-            [lein-ring "0.12.4"]]
-  :main ^:skip-aot shopping-list.core
+            [lein-ring "0.12.4"]
+            [lein-cljsbuild "1.1.7"]]
+  :main shopping-list.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
@@ -28,5 +31,4 @@
                         :asset-path "out"
                         :output-to "resources/main.js"
                         :output-dir "resources/out"}}]
-  }
-  :ring {:handler shopping-list.core/app})
+  })

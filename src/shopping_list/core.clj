@@ -1,11 +1,12 @@
 (ns shopping-list.core
   (:require [compojure.core :refer :all]
+            [compojure.handler :refer [site]]
             [compojure.route :as route]
+            [org.httpkit.server :refer [send! run-server with-channel on-close on-receive]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
-            [ring.util.response :refer [content-type response]]
-            [ring.adapter.jetty :as jetty]
             [ring.middleware.edn :refer [wrap-edn-params]]
             [ring.middleware.file :refer [wrap-file]]
+            [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.resource :refer [wrap-resource]]))
 
 (defonce actions (atom [{:type :add-good :uuid "2dd89b67-3156-4c9e-8a44-7e4523e75199" :name "Milk"}
@@ -50,28 +51,40 @@
   [actions]
   (reduce reducer {:shopping-list [] :goods {}} actions))
 
-(defn send-edn [x]
-  (-> x pr-str response (content-type "application/edn")))
-
 (defn update-state
   [action]
-  (-> (swap! actions #(conj % action)) compute-state send-edn))
+  (-> (swap! actions #(conj % (read-string action))) compute-state pr-str))
+
+(defonce channels (atom #{}))
+
+(defn connect! [channel]
+  (send! channel (-> @actions compute-state pr-str))
+  (swap! channels conj channel))
+
+(defn disconnect! [channel status]
+  (println "channel closed:" status)
+  (swap! channels #(remove #{channel} %)))
+
+(defn notify-clients [msg]
+  (let [state (update-state msg)]
+    (doseq [channel @channels]
+      (send! channel state))))
+
+(defn ws-handler [request]
+  (with-channel request channel
+    (connect! channel)
+    (on-close channel (partial disconnect! channel))
+    (on-receive channel #(notify-clients %))))
 
 (defroutes app-routes
-  (GET "/shopping-list" []
-       (-> @actions compute-state send-edn))
-  (POST "/shopping-list" [goodId]
-        (update-state {:type :add-shopping-item :uuid (java.util.UUID/randomUUID) :good goodId}))
-  (POST "/shopping-list/:goodId/increase" [goodId]
-        (update-state {:type :increase-quantity :uuid goodId}))
-  (POST "/shopping-list/:goodId/decrease" [goodId]
-        (update-state {:type :decrease-quantity :uuid goodId}))
-  (DELETE "/shopping-list/:goodId" [goodId]
-          (update-state {:type :remove-shopping-item :uuid goodId}))
-  (route/not-found "<h1>Page not found</h1>"))
+  (GET "/ws" [] ws-handler)
+  (route/not-found "<h1>Page not found!!!!</h1>"))
 
 (def app
   (-> app-routes
       (wrap-defaults api-defaults)
       (wrap-edn-params)
       (wrap-resource ".")))
+
+(defn -main [& args]
+  (run-server (wrap-reload #'app) {:port 3000}))

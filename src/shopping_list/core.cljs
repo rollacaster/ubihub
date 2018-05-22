@@ -35,37 +35,37 @@
 
 ;; -------------------------
 ;; Actions
-(go (let [response (<! (http/get "/shopping-list"
-                                 {:with-credentials? false}))]
-      (reset! app-db (:body response))))
 
+(defonce ws-chan (atom nil))
+(defn make-websocket! [url]
+ (if-let [chan (js/WebSocket. url)]
+   (do
+     (set! (.-onmessage chan) #(reset! app-db (->> % .-data read-string)))
+     (reset! ws-chan chan))
+;; TODO Handle ws error
+   (throw (js/Error. "Websocket connection failed!"))))
+
+(defn send!
+ [msg]
+ (if @ws-chan
+   (.send @ws-chan msg)
+   (throw (js/Error. "Websocket is not available!"))))
 
 (defn add-shopping-item
   [goodId]
-  (go (let [res (<! (http/post "/shopping-list"
-                               {:edn-params {:goodId goodId}
-                                :with-credentials? false}))]
-      (reset! app-db (:body res))
-      (.scrollTo js/window 0 0))))
-
-
-(defn increase-quantity
-  [goodId]
-  (go (let [res (<! (http/post (str "/shopping-list/" goodId "/increase")
-                               {:with-credentials? false}))]
-      (reset! app-db (:body res)))))
-
-(defn decrease-quantity
-  [goodId]
-  (go (let [res (<! (http/post (str "/shopping-list/" goodId "/decrease")
-                               {:with-credentials? false}))]
-      (reset! app-db (:body res)))))
+  (send! {:type :add-shopping-item :uuid (str (random-uuid)) :good goodId}))
 
 (defn remove-shopping-item
   [goodId]
-  (go (let [res (<! (http/delete (str "/shopping-list/" goodId)
-                                 {:with-credentials? false}))]
-      (reset! app-db (:body res)))))
+  (send! {:type :remove-shopping-item :uuid goodId}))
+
+(defn increase-quantity
+  [goodId]
+  (send! {:type :increase-quantity :uuid goodId}))
+
+(defn decrease-quantity
+  [goodId]
+  (send! {:type :decrease-quantity :uuid goodId}))
 
 (defn toogle-goods-modal
   []
@@ -141,5 +141,6 @@
 
 ;; -------------------------
 ;; Initialize app
-(reagent/render [main] (.getElementById js/document "app"))
-
+(do
+  (reagent/render [main] (.getElementById js/document "app"))
+  (make-websocket! "ws://192.168.0.229:3000/ws"))
