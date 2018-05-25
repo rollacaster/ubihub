@@ -38,13 +38,11 @@
   (let [{:keys [uuid]} action
         item (first (filter #(= (first %) uuid) (:shopping-list state)))
         quantity (:quantity (second item))]
-    (if (> quantity  1)
-      (update state :shopping-list
-              (fn [x] (map (fn [item]
-                             (if (= (first item) uuid)
-                               (vector uuid (update (second item) :quantity (comp #(min 9 %) dec)))
-                               item)) x)))
-      (reducer state {:type :remove-shopping-item :uuid uuid}))))
+    (update state :shopping-list
+            (fn [x] (map (fn [item]
+                           (if (= (first item) uuid)
+                             (vector uuid (update (second item) :quantity (comp #(max 1 %) dec)))
+                             item)) x)))))
 
 (defn compute-state
   [actions]

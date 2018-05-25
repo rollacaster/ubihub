@@ -39,7 +39,7 @@
                      :goods
                      {"8280b3f8-e14a-45d9-be46-09ffb44b8db9" {:name "Banana"}}}
                     {:type :decrease-quantity :uuid "59b79451-6d22-44ec-93fc-8336bed7a46c"})
-           {:shopping-list []
+           {:shopping-list [["59b79451-6d22-44ec-93fc-8336bed7a46c" {:quantity 1, :good "8280b3f8-e14a-45d9-be46-09ffb44b8db9"}]]
             :goods
             {"8280b3f8-e14a-45d9-be46-09ffb44b8db9" {:name "Banana"}}}))))
   (testing ">1 quantity"
