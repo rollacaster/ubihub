@@ -7,11 +7,10 @@
             [ring.middleware.edn :refer [wrap-edn-params]]
             [ring.middleware.file :refer [wrap-file]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.resource :refer [wrap-resource]]))
+            [ring.middleware.resource :refer [wrap-resource]]
+            [shopping-list.goods :refer [goods]]))
 
-(defonce actions (atom [{:type :add-good :uuid "2dd89b67-3156-4c9e-8a44-7e4523e75199" :name "Milk"}
-                        {:type :add-good :uuid "dbea6f63-1004-4c9c-8d28-b84c866df474" :name "Cheese"}
-                        {:type :add-good :uuid "8280b3f8-e14a-45d9-be46-09ffb44b8db9":name "Banana"}]))
+(defonce actions (atom goods))
 
 (defmulti reducer (fn [state action] (:type action)))
 
