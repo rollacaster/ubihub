@@ -14,9 +14,13 @@
 
 (defmulti reducer (fn [state action] (:type action)))
 
-(defmethod reducer :add-good [state action]
+(defmethod reducer :add-category [state action]
   (let [{:keys [uuid name]} action]
-    (update state :goods #(assoc % uuid {:name name}))))
+    (update state :categorys #(assoc % uuid {:name name}))))
+
+(defmethod reducer :add-good [state action]
+  (let [{:keys [uuid name category]} action]
+    (update state :goods #(assoc % uuid {:name name :category category}))))
 
 (defmethod reducer :add-shopping-item [state action]
   (let [{:keys [uuid good]} action]
