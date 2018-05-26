@@ -10,6 +10,8 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [shopping-list.actions :refer [init]]))
 
+;; Reducers
+
 (defonce actions (atom init))
 
 (defmulti reducer (fn [state action] (:type action)))
@@ -55,6 +57,8 @@
 (defn update-state
   [action]
   (-> (swap! actions #(conj % (read-string action))) compute-state pr-str))
+
+;; Websockets
 
 (defonce channels (atom #{}))
 
