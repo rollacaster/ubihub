@@ -8,9 +8,9 @@
             [ring.middleware.file :refer [wrap-file]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [shopping-list.goods :refer [goods]]))
+            [shopping-list.actions :refer [init]]))
 
-(defonce actions (atom goods))
+(defonce actions (atom init))
 
 (defmulti reducer (fn [state action] (:type action)))
 

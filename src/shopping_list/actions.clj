@@ -1,6 +1,6 @@
-(ns shopping-list.goods)
+(ns shopping-list.actions)
 
-(def goods
+(def init
   [{:type :add-good, :uuid "5683557f-cf7b-4bb3-a58a-f9b54d511be6", :name "Banana" :category "8442ab6f-69df-49ef-a1dd-a2125197e063"}
    {:type :add-good, :uuid "5d63e80a-914a-49f7-8200-394dc69d8b28", :name "Apfel" :category "8442ab6f-69df-49ef-a1dd-a2125197e063"}
    {:type :add-good, :uuid "86b1732d-4573-4ac5-b2d9-0d874e7cf586", :name "Salat" :category "8442ab6f-69df-49ef-a1dd-a2125197e063"}
