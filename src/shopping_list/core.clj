@@ -20,25 +20,25 @@
   (let [{:keys [uuid name]} action]
     (update state :categorys #(assoc % uuid {:name name}))))
 
-(defmethod reducer :add-good [state action]
+(defmethod reducer :add-shopping-item [state action]
   (let [{:keys [uuid name category]} action]
-    (update state :goods #(assoc % uuid {:name name :quantity 0 :category category}))))
+    (update state :shopping-list #(assoc % uuid {:name name :quantity 0 :category category}))))
 
 (defmethod reducer :remove-shopping-item [state action]
   (let [{:keys [uuid]} action]
-    (assoc-in state [:goods uuid :quantity] 0)))
+    (assoc-in state [:shopping-list uuid :quantity] 0)))
 
 (defmethod reducer :increase-quantity [state action]
   (let [{:keys [uuid]} action]
-    (update-in state [:goods uuid :quantity] #(if (>= % 9) (identity %) (inc %)))))
+    (update-in state [:shopping-list uuid :quantity] #(if (>= % 9) (identity %) (inc %)))))
 
 (defmethod reducer :decrease-quantity [state action]
   (let [{:keys [uuid]} action]
-    (update-in state [:goods uuid :quantity] #(if (> % 1) (dec %) (identity %)))))
+    (update-in state [:shopping-list uuid :quantity] #(if (> % 1) (dec %) (identity %)))))
 
 (defn compute-state
   [actions]
-  (reduce reducer {:shopping-list [] :goods {}} actions))
+  (reduce reducer {:shopping-list {}} actions))
 
 (defn update-state
   [action]
