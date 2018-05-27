@@ -30,11 +30,7 @@
 
 (defmethod reducer :increase-quantity [state action]
   (let [{:keys [uuid]} action]
-    (update state :shopping-list
-            (fn [x] (map (fn [item] (if (= (first item) uuid)
-                                      (vector uuid (update (second item)
-                                                           :quantity (comp #(min 9 %) inc)))
-                                      item)) x)))))
+    (update-in state [:goods uuid :quantity] #(if (>= % 9) (identity %) (inc %)))))
 
 (defmethod reducer :decrease-quantity [state action]
   (let [{:keys [uuid]} action
