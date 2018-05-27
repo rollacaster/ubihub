@@ -24,10 +24,6 @@
   (let [{:keys [uuid name category]} action]
     (update state :goods #(assoc % uuid {:name name :category category}))))
 
-(defmethod reducer :add-shopping-item [state action]
-  (let [{:keys [uuid good]} action]
-    (update state :shopping-list #(cons (vector (str uuid) {:quantity 1 :good good}) %))))
-
 (defmethod reducer :remove-shopping-item [state action]
   (let [{:keys [uuid]} action]
     (update state :shopping-list (fn [x] (remove #(= (first %) uuid) x)))))
