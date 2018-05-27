@@ -22,7 +22,7 @@
 
 (defmethod reducer :add-good [state action]
   (let [{:keys [uuid name category]} action]
-    (update state :goods #(assoc % uuid {:name name :category category}))))
+    (update state :goods #(assoc % uuid {:name name :quantity 0 :category category}))))
 
 (defmethod reducer :remove-shopping-item [state action]
   (let [{:keys [uuid]} action]

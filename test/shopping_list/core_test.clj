@@ -43,7 +43,10 @@
 (deftest goods
   (testing "add-goods"
     (is (=
-           (reducer {:shopping-list [] :goods {}}
-                    {:type :add-good :uuid "8280b3f8-e14a-45d9-be46-09ffb44b8db9" :name "Banana"})
-           {:shopping-list []
-            :goods {"8280b3f8-e14a-45d9-be46-09ffb44b8db9" {:name "Banana"}}}))))
+           (reducer {:goods {}}
+                    {:type :add-good
+                     :uuid "8280b3f8-e14a-45d9-be46-09ffb44b8db9"
+                     :name "Banana"
+                     :category "8442ab6f-69df-49ef-a1dd-a2125197e063"})
+           {:goods {"8280b3f8-e14a-45d9-be46-09ffb44b8db9"
+                    {:name "Banana" :quantity 0 :category "8442ab6f-69df-49ef-a1dd-a2125197e063"}}}))))
