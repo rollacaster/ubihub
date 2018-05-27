@@ -26,7 +26,7 @@
 
 (defmethod reducer :remove-shopping-item [state action]
   (let [{:keys [uuid]} action]
-    (update state :shopping-list (fn [x] (remove #(= (first %) uuid) x)))))
+    (assoc-in state [:goods uuid :quantity] 0)))
 
 (defmethod reducer :increase-quantity [state action]
   (let [{:keys [uuid]} action]
