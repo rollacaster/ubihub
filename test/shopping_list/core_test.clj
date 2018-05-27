@@ -48,3 +48,10 @@
                     {:type :decrease-quantity :uuid "8280b3f8-e14a-45d9-be46-09ffb44b8db9"})
            {:shopping-list
             {"8280b3f8-e14a-45d9-be46-09ffb44b8db9" {:name "Banana" :quantity 1}}})))))
+
+(deftest category
+  (testing "add-category"
+    (is (=
+         (reducer {:categorys {}}
+                  {:type :add-category :name "Obst" :uuid "55968d0e-1c1d-4303-a541-ada5b1b6261e"})
+         {:categorys {"55968d0e-1c1d-4303-a541-ada5b1b6261e" {:name "Obst"}}}))))
