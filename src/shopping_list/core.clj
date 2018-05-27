@@ -36,20 +36,60 @@
   (let [{:keys [uuid]} action]
     (update-in state [:shopping-list uuid :quantity] #(if (> % 1) (dec %) (identity %)))))
 
-(defn compute-state
-  [actions]
+(defn compute-state [actions]
   (reduce reducer {:shopping-list {}} actions))
 
-(defn update-state
-  [action]
-  (-> (swap! actions #(conj % (read-string action))) compute-state pr-str))
+(defn update-state [action]
+  (-> (swap! actions #(conj % (read-string action))) compute-state denormalize-state pr-str))
+
+;; Denormalization
+
+(defn filter-category [category-uuid shopping-list]
+           (filter (fn [[_ {:keys [category]}]] (= category-uuid category)) shopping-list))
+
+(defn denormalize-items [shopping-list]
+  (map (fn [[uuid {:keys [name quantity]}]]
+         {:uuid uuid :name name :quantity quantity})
+       shopping-list))
+
+(defn filter-items [item-filter shopping-list]
+  (filter (fn [[_ {:keys [quantity]}]] (item-filter quantity)) shopping-list))
+
+(defn filter-nil [items] (filter identity items))
+
+(defn denormalize-goods [shopping-list categorys]
+  (->> categorys
+       (map (fn [[category-uuid {:keys [name]}]]
+              (let [items (->> shopping-list
+                               (filter-category category-uuid)
+                               (filter-items #(= % 0))
+                               denormalize-items)]
+                (if (> (count items) 0)
+                  {:category name :goods (into (vector) items)}))))
+      filter-nil))
+
+(defn denormalize-shopping-list [shopping-list categorys]
+  (->> categorys
+       (map (fn [[category-uuid {:keys [name]}]]
+              (let [items (->> shopping-list
+                               (filter-category category-uuid)
+                               (filter-items #(>= % 1))
+                               denormalize-items)]
+                (if (> (count items) 0)
+                  {:category name :shopping-items (into (vector) items)}))))
+       filter-nil))
+
+(defn denormalize-state [state]
+  (let [{:keys [categorys shopping-list]} state]
+    {:shopping-list (into (vector) (denormalize-shopping-list shopping-list categorys))
+     :goods (into (vector) (denormalize-goods shopping-list categorys))}))
 
 ;; Websockets
 
 (defonce channels (atom #{}))
 
 (defn connect! [channel]
-  (send! channel (-> @actions compute-state pr-str))
+  (send! channel (-> @actions compute-state denormalize-state pr-str))
   (swap! channels conj channel))
 
 (defn disconnect! [channel status]
