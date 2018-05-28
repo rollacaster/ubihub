@@ -59,18 +59,15 @@
 (defn quantity-counter
   [id quantity]
   [:div {:class "flex flex-column items-center"}
-   (quantity-button "+" #(increase-quantity id))
-   [:span {:class "f3 db black-70"} quantity]
-   (quantity-button "-" #(decrease-quantity id))])
+   #_(quantity-button "+" #(increase-quantity id))
+   [:span {:class "f3 db black-70 ba b--mid-gray mt2 ph3 br3"} quantity]
+   #_(quantity-button "-" #(decrease-quantity id))])
 
 (defn shopping-item
   [{:keys [uuid name quantity]}]
-  [:li {:key uuid :class "flex items-center lh-copy pa3 bb b--black-10"}
-   [:input {:id uuid
-            :type "checkbox"
-            :checked false
-            :on-change #(remove-shopping-item uuid)}]
-   [:label {:for uuid :class "f3 db black-70 pl3 flex-auto"} name]
+  [:li {:key uuid :class "flex items-center lh-copy pv3 bb b--black-10"}
+   [:ion-icon {:name "checkmark-circle" :class "f1" :on-click #(remove-shopping-item uuid)}]
+   [:label {:for uuid :class "f3 pt2 db black-70 pl3 flex-auto"} name]
    (quantity-counter uuid quantity)])
 
 (defn good [{:keys [uuid name]}]
@@ -106,13 +103,11 @@
         add-goods-modal-shown? @add-goods-modal-shown?
         {:keys [goods shopping-list]} app-db]
     [:div
-     [:div {:class (str "relative sans-serif mw5 center pa3 overflow-x-hidden"
+     [:div {:class (str "relative sans-serif center pa3 overflow-x-hidden"
                         (if add-goods-modal-shown? " dn" " "))}
       [:ul {:class "list pl0 mt0 measure center"}
        (map (fn [{:keys [category shopping-items]}]
-              [:div {:key category}
-               [:h2 {:class "f6"} category]
-               (map shopping-item shopping-items)])
+              (map shopping-item shopping-items))
             shopping-list)]]
      (when (not add-goods-modal-shown?) (add-button goods))
      (add-goods-modal goods)]))
