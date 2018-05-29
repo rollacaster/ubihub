@@ -60,14 +60,16 @@
   [id quantity]
   [:div {:class "flex flex-column items-center"}
    #_(quantity-button "+" #(increase-quantity id))
-   [:span {:class "f3 db black-70 ba b--mid-gray mt2 ph3 br3"} quantity]
+   [:span {:class "f4 db black-70 ba b--mid-gray mt2 ph3 br3"} quantity]
    #_(quantity-button "-" #(decrease-quantity id))])
 
 (defn shopping-item
   [{:keys [uuid name quantity]}]
   [:li {:key uuid :class "flex items-center lh-copy pv3 bb b--black-10"}
-   [:ion-icon {:name "checkmark-circle" :class "f1" :on-click #(remove-shopping-item uuid)}]
-   [:label {:for uuid :class "f3 pt2 db black-70 pl3 flex-auto"} name]
+   [:div {:class "flex bg-mid-gray white br-100 shadow-5"}
+    [:ion-icon {:name "checkmark" :class "f3" :style {:transform "translateY(-3px)"}
+                :on-click #(remove-shopping-item uuid)}]]
+   [:label {:for uuid :class "f4 pt2 db black-70 pl4 flex-auto"} name]
    (quantity-counter uuid quantity)])
 
 (defn good [{:keys [uuid name]}]
