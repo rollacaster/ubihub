@@ -117,4 +117,5 @@
 ;; Initialize app
 (do
   (reagent/render [main] (.getElementById js/document "app"))
-  (make-websocket! "ws://192.168.0.229:3000/ws"))
+  (make-websocket! (str "ws://"(-> js/document .-location .-hostname) ":"
+                        (-> js/document .-location .-port) "/ws")))
