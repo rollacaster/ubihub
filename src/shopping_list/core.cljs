@@ -105,12 +105,19 @@
         add-goods-modal-shown? @add-goods-modal-shown?
         {:keys [goods shopping-list]} app-db]
     [:div
-     [:div {:class (str "relative sans-serif center pa3 overflow-x-hidden"
+     [:div {:class (str "relative sans-serif center overflow-x-hidden"
                         (if add-goods-modal-shown? " dn" " "))}
-      [:ul {:class "list pl0 mt0 measure center"}
-       (map (fn [{:keys [category shopping-items]}]
-              (map shopping-item shopping-items))
-            shopping-list)]]
+      [:header {:class "fixed w-100 bg-black white pa3 z-5"}
+       [:div {:class "mb3"}
+        [:span {:class "f2"} "UbiHub"]]
+       [:div {:class "flex w100 f4 justify-around"}
+        [:span {:class "bb b--white pb1"} "SHOPPING"]
+        [:span "GOODS"]]]
+      [:div {:class "ph3 mt6"}
+       [:ul {:class "list pl0 mt0 measure center"}
+        (map (fn [{:keys [category shopping-items]}]
+               (map shopping-item shopping-items))
+             shopping-list)]]]
      (when (not add-goods-modal-shown?) (add-button goods))
      (add-goods-modal goods)]))
 
