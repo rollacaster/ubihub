@@ -7,6 +7,13 @@
 
 (enable-console-print!)
 ;; -------------------------
+;; Colors
+(def primary "dark-blue")
+(def secondary "white")
+(def border "b--black-10")
+(def font "black-70")
+(def font-secondary "white")
+;; -------------------------
 ;; Data
 
 (def app-db (atom {}))
@@ -52,52 +59,49 @@
 (defn quantity-button
   [label on-click]
   [:button
-    {:class "f4 dim ph3 pv2 mv2 dib ba b--mid-gray bg-white mid-gray a"
+   {:class (str "f4 dim ph3 pv2 mv2 dib ba " border)
      :on-click on-click}
     label])
 
 (defn quantity-counter
   [id quantity]
-  [:div {:class "flex flex-column items-center"}
-   #_(quantity-button "+" #(increase-quantity id))
-   [:span {:class "f4 db black-70 ba b--mid-gray mt2 ph3 br3"} quantity]
-   #_(quantity-button "-" #(decrease-quantity id))])
+  [:span {:class (str "f4 db " font " ba " border " ph3 br3")} quantity])
 
 (defn shopping-item
   [{:keys [uuid name quantity]}]
-  [:li {:key uuid :class "flex items-center lh-copy pv3 bb b--black-10"}
-   [:div {:class "flex bg-mid-gray white br-100 shadow-5"}
-    [:ion-icon {:name "checkmark" :class "f3" :style {:transform "translateY(-3px)"}
-                :on-click #(remove-shopping-item uuid)}]]
-   [:label {:for uuid :class "f4 pt2 db black-70 pl4 flex-auto"} name]
-   (quantity-counter uuid quantity)])
+  [:li {:key uuid :class (str "flex items-center lh-copy pv3 bb " border)}
+   (quantity-counter uuid quantity)
+   [:label {:for uuid :class (str "f4 db " font " pl2 flex-auto")} name]
+   [:div {:class (str "w2 h2 bg-" primary " " font-secondary " br2 shadow-5")}
+    [:ion-icon {:name "checkmark" :class "f3" :style {:transform "translateX(4px)"}
+                :on-click #(remove-shopping-item uuid)}]]])
 
 (defn good [{:keys [uuid name]}]
-  [:li {:class "dib mr1 mb2" :key uuid}
-   [:button {:class "f5 b db pa2 dim dark-gray ba b--black-20 bg-white"
+  [:li {:class (str "dib mr1 mb2 " font-secondary) :key uuid}
+   [:button {:class (str "f5 b db pa2 dim ba b--black-20 bg-" primary " " font-secondary)
              :on-click #(do (increase-quantity uuid) (toogle-goods-modal))} name]])
 
 (defn add-goods-modal
   [goods]
   [:div
-   {:class (str "w-100 vh-100 bg-white absolute flex-column justify-between ")
+   {:class (str "w-100 vh-100 bg-" secondary " absolute flex-column justify-between ")
     :style {:transform (str "translateX(" (if @add-goods-modal-shown? 0 375) "px)")
             :transition "transform 0.5s"}}
    [:div {:class "center pa3"}
     (map (fn [{:keys [category goods]}]
            [:div {:key category}
-            [:h2 {:class "f6"} category]
+            [:h2 {:class (str "f5 " font)} category]
             [:ul (map good goods)]])
          goods)]
    [:div {:class "flex justify-center"}
-    [:button {:class "f5 pa2 mb2 ba white b--black-20 bg-black"
+    [:button {:class (str "f5 pa2 mb2 ba white bg-" primary)
               :on-click toogle-goods-modal} "back"]]])
 
 (defn add-button
   [goods]
   (when (> (count goods) 0)
     [:div {:class "fixed bottom-0 right-0 ma3"}
-     [:button {:class "f2 br-100 h3 w3 mb2 white bg-mid-gray shadow-5"
+     [:button {:class (str "f2 br-100 h3 w3 mb2 " font-secondary " bg-" primary " shadow-5")
                :on-click toogle-goods-modal} "+"]]))
 
 (defn main []
@@ -107,7 +111,7 @@
     [:div
      [:div {:class (str "relative sans-serif center overflow-x-hidden"
                         (if add-goods-modal-shown? " dn" " "))}
-      [:header {:class "fixed w-100 bg-black white pa3 z-5"}
+      [:header {:class (str "fixed w-100 bg-" primary " " font-secondary "  pa3 z-5")}
        [:div {:class "mb3"}
         [:span {:class "f2"} "UbiHub"]]
        [:div {:class "flex w100 f4 justify-around"}
