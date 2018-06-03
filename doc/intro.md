@@ -1,3 +1,3 @@
-# Introduction to shopping-list
+# Introduction to ubihub
 
 TODO: write [great documentation](http://jacobian.org/writing/what-to-write/)

@@ -1,4 +1,4 @@
-(defproject shopping-list "0.1.0-SNAPSHOT"
+(defproject ubihub "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -19,7 +19,7 @@
   :plugins [[lein-figwheel "0.5.16-SNAPSHOT"]
             [lein-ring "0.12.4"]
             [lein-cljsbuild "1.1.7"]]
-  :main shopping-list.core
+  :main ubihub.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
@@ -27,7 +27,7 @@
     :builds [{:id "dev"
              :source-paths ["src"]
              :figwheel true
-             :compiler {:main "shopping-list.core"
+             :compiler {:main "ubihub.core"
                         :asset-path "out"
                         :output-to "resources/public/main.js"
                         :output-dir "resources/public/out"}}]

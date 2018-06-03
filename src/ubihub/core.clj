@@ -1,4 +1,4 @@
-(ns shopping-list.core
+(ns ubihub.core
   (:gen-class)
   (:require [compojure.core :refer :all]
             [compojure.handler :refer [site]]
@@ -9,7 +9,7 @@
             [ring.middleware.file :refer [wrap-file]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [shopping-list.actions :refer [init]]))
+            [ubihub.actions :refer [init]]))
 
 ;; Denormalization
 

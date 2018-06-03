@@ -1,4 +1,4 @@
-(ns shopping-list.actions)
+(ns ubihub.actions)
 
 (def init
   [{:type :add-shopping-item, :uuid "5683557f-cf7b-4bb3-a58a-f9b54d511be6", :name "Banana" :category "8442ab6f-69df-49ef-a1dd-a2125197e063"}

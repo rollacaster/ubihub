@@ -1,6 +1,6 @@
-(ns shopping-list.core-test
+(ns ubihub.core-test
   (:require [clojure.test :refer :all]
-            [shopping-list.core :refer :all]))
+            [ubihub.core :refer :all]))
 
 (deftest shopping-items
   (testing "add-shopping-item"
