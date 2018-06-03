@@ -136,8 +136,10 @@
         [:div {:class "mb3"}
          [:span {:class "f2"} "UbiHub"]]
         [:div {:class "flex w100 f4 justify-around"}
-         [:a {:class "bb b--white pb1"} "SHOPPING"]
-         [:a {:on-click toogle-goods-modal}"GOODS"]]]]
+         [:a {:class (when-not add-goods-modal-shown? "bb b--white pb1")
+              :on-click #(when add-goods-modal-shown? (toogle-goods-modal))} "SHOPPING"]
+         [:a {:class (when add-goods-modal-shown? "bb b--white pb1")
+              :on-click #(when-not add-goods-modal-shown? (toogle-goods-modal))}"GOODS"]]]]
       [:div {:class (str"ph3 " (if add-goods-modal-shown? " dn" " "))}
        [:ul {:class "list pl0 mt0 measure center"}
         (map (fn [{:keys [category shopping-items]}]
