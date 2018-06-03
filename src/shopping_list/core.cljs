@@ -120,6 +120,11 @@
      [:button {:class (str "f2 br-100 h3 w3 mb2 " font-secondary " bg-" primary " shadow-5")
                :on-click toogle-goods-modal} "+"]]))
 
+(defn link-button [label active]
+  [:a {:class (str "link " secondary " " (when active "bb b--white pb1"))
+       :href "#"
+       :on-click #(when-not active (toogle-goods-modal))} label])
+
 (defn main []
   (let [app-db @app-db
         add-goods-modal-shown? @add-goods-modal-shown?
@@ -139,10 +144,8 @@
         [:div {:class "mb4"}
          [:span {:class "f2"} "UbiHub"]]
         [:div {:class "flex w100 f4 justify-around"}
-         [:a {:class (when-not add-goods-modal-shown? "bb b--white pb1")
-              :on-click #(when add-goods-modal-shown? (toogle-goods-modal))} "SHOPPING"]
-         [:a {:class (when add-goods-modal-shown? "bb b--white pb1")
-              :on-click #(when-not add-goods-modal-shown? (toogle-goods-modal))}"GOODS"]]]]
+         (link-button "SHOPPING" (not add-goods-modal-shown?))
+         (link-button "GOODS" add-goods-modal-shown?)]]]
       [:div {:class (str"ph3 " (if add-goods-modal-shown? " dn" " "))}
        [:ul {:class "list pl0 mt0 measure center"}
         (map (fn [{:keys [category shopping-items]}]
