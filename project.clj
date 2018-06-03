@@ -19,7 +19,6 @@
   :plugins [[lein-figwheel "0.5.16-SNAPSHOT"]
             [lein-ring "0.12.4"]
             [lein-cljsbuild "1.1.7"]]
-  :hooks [leiningen.cljsbuild]
   :main ubihub.core
   :target-path "target/%s"
   :uberjar-name "ubihub.jar"
