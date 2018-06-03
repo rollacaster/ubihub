@@ -19,6 +19,7 @@
 (def app-db (atom {}))
 (defonce add-goods-modal-shown? (atom false))
 (defonce open-counter (atom nil))
+(defonce open-category (atom nil))
 
 ;; -------------------------
 ;; Actions
@@ -92,24 +93,25 @@
 
 (defn good [{:keys [uuid name]}]
   [:li {:class (str "dib mr1 mb2 " font-secondary) :key uuid}
-   [:button {:class (str "f5 b db pa2 dim ba b--black-20 bg-" primary " " font-secondary)
-             :on-click #(do (increase-quantity uuid) (toogle-goods-modal))} name]])
+   [:button {:class (str "f6 br-pill b db pa2 dim ba b--black-20 bg-" primary " " font-secondary)
+             :on-click #(increase-quantity uuid)} name]])
 
 (defn add-goods-modal
-  [goods]
+  [goods open]
   [:div
    {:class (str "w-100 vh-100 bg-" secondary " absolute flex-column justify-between ")
     :style {:transform (str "translateX(" (if @add-goods-modal-shown? 0 375) "px)")
             :transition "transform 0.5s"}}
-   [:div {:class "center pa3"}
+   [:div
     (map (fn [{:keys [category goods]}]
-           [:div {:key category}
-            [:h2 {:class (str "f5 " font)} category]
-            [:ul (map good goods)]])
-         goods)]
-   [:div {:class "flex justify-center"}
-    [:button {:class (str "f5 pa2 mb2 ba white bg-" primary)
-              :on-click toogle-goods-modal} "back"]]])
+           [:div {:class " bt bg-" :key category}
+            [:button { :class (str "flex bg-" secondary " bn justify-between w-100 w-100 f4 ph3 pv3 " font)
+                      :on-click #(swap! open-category (fn [open-category] (if (= open-category category) nil category)))}
+             [:span category]
+             [:ion-icon {:name "add" :class (str "f3 " primary)
+                         :style {:transform "translateX(4px)"}}]]
+            (when (= open category) [:ul (map good goods)])])
+         goods)]])
 
 (defn add-button
   [goods]
@@ -122,7 +124,8 @@
   (let [app-db @app-db
         add-goods-modal-shown? @add-goods-modal-shown?
         open-count @open-counter
-        {:keys [goods shopping-list]} app-db]
+        {:keys [goods shopping-list]} app-db
+        open-category @open-category]
     [:div {:class "h-100"
            :on-click (fn [e]
                        (and
@@ -133,7 +136,7 @@
      [:div {:class (str "relative sans-serif center overflow-x-hidden")}
       [:header {:class "mb6"}
        [:div {:class (str "fixed w-100 bg-" primary " " font-secondary "  pa3 z-1")}
-        [:div {:class "mb3"}
+        [:div {:class "mb4"}
          [:span {:class "f2"} "UbiHub"]]
         [:div {:class "flex w100 f4 justify-around"}
          [:a {:class (when-not add-goods-modal-shown? "bb b--white pb1")
@@ -146,7 +149,7 @@
                (map (partial shopping-item open-count) shopping-items))
              shopping-list)]]]
      (when (not add-goods-modal-shown?) (add-button goods))
-     (add-goods-modal goods)]))
+     (add-goods-modal goods open-category)]))
 
 
 ;; -------------------------
