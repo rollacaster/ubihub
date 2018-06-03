@@ -23,7 +23,7 @@
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
-  :min-lein-version "2.8.1"
+  :min-lein-version "2.7.1"
   :cljsbuild {
     :builds [{:id "dev"
              :source-paths ["src"]
