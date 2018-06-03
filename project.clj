@@ -22,6 +22,7 @@
   :hooks [leiningen.cljsbuild]
   :main ubihub.core
   :target-path "target/%s"
+  :uberjar-name "ubihub.jar"
   :profiles {:uberjar {:aot :all}}
   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
   :min-lein-version "2.7.1"
