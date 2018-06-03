@@ -29,6 +29,6 @@
              :figwheel true
              :compiler {:main "shopping-list.core"
                         :asset-path "out"
-                        :output-to "resources/main.js"
-                        :output-dir "resources/out"}}]
+                        :output-to "resources/public/main.js"
+                        :output-dir "resources/public/out"}}]
   })

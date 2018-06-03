@@ -9,6 +9,6 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
-/resources/main.js
+/resources/public/main.js
 /figwheel_server.log
-/resources/out
+/resources/public/out

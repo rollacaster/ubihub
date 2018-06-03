@@ -1,4 +1,5 @@
 (ns shopping-list.core
+  (:gen-class)
   (:require [compojure.core :refer :all]
             [compojure.handler :refer [site]]
             [compojure.route :as route]
@@ -115,7 +116,7 @@
   (-> app-routes
       (wrap-defaults api-defaults)
       (wrap-edn-params)
-      (wrap-resource ".")))
+      (wrap-resource "public")))
 
 (defn -main [& args]
   (run-server (wrap-reload #'app) {:port 3000}))
