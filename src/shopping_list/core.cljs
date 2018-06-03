@@ -130,15 +130,15 @@
                         (not (= (-> e .-target .-id) "counter-button"))
                         open-count
                         (reset! open-counter nil)))}
-     [:div {:class (str "relative sans-serif center overflow-x-hidden"
-                        (if add-goods-modal-shown? " dn" " "))}
-      [:header {:class (str "fixed w-100 bg-" primary " " font-secondary "  pa3 z-1")}
-       [:div {:class "mb3"}
-        [:span {:class "f2"} "UbiHub"]]
-       [:div {:class "flex w100 f4 justify-around"}
-        [:span {:class "bb b--white pb1"} "SHOPPING"]
-        [:span "GOODS"]]]
-      [:div {:class "ph3 mt6"}
+     [:div {:class (str "relative sans-serif center overflow-x-hidden")}
+      [:header {:class "mb6"}
+       [:div {:class (str "fixed w-100 bg-" primary " " font-secondary "  pa3 z-1")}
+        [:div {:class "mb3"}
+         [:span {:class "f2"} "UbiHub"]]
+        [:div {:class "flex w100 f4 justify-around"}
+         [:a {:class "bb b--white pb1"} "SHOPPING"]
+         [:a {:on-click toogle-goods-modal}"GOODS"]]]]
+      [:div {:class (str"ph3 " (if add-goods-modal-shown? " dn" " "))}
        [:ul {:class "list pl0 mt0 measure center"}
         (map (fn [{:keys [category shopping-items]}]
                (map (partial shopping-item open-count) shopping-items))
