@@ -119,4 +119,4 @@
       (wrap-resource "public")))
 
 (defn -main [& args]
-  (run-server (wrap-reload #'app) {:port (System/getenv "PORT")}))
+  (run-server (wrap-reload #'app) {:port (Integer/parseInt (System/getenv "PORT"))}))
