@@ -159,5 +159,6 @@
 ;; Initialize app
 (do
   (reagent/render [main] (.getElementById js/document "app"))
-  (make-websocket! (str "ws://"(-> js/document .-location .-hostname) ":"
+  (make-websocket! (str (if (= (-> js/document .-location .-protocol) "https:") "wss://" "ws://")
+                        (-> js/document .-location .-hostname) ":"
                         (-> js/document .-location .-port) "/ws")))

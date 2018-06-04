@@ -34,4 +34,5 @@
                         :asset-path "out"
                         :output-to "resources/public/main.js"
                         :output-dir "resources/public/out"}}]
-  })
+  }
+  :heroku {:process-types { "web" "java -jar target/ubihub.jar" }})
