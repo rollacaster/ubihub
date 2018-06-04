@@ -1,7 +1,6 @@
 (ns ubihub.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [reagent.core :as reagent :refer [atom]]
-            [cljs-http.client :as http]
             [cljs.core.async :refer [<! chan]]
             [cljs.reader :refer [read-string]]))
 
