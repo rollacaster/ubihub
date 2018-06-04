@@ -18,10 +18,10 @@
                  [http-kit "2.2.0"]]
   :plugins [[lein-figwheel "0.5.16-SNAPSHOT"]
             [lein-ring "0.12.4"]
-            [lein-cljsbuild "1.1.7"]]
+            [lein-cljsbuild "1.1.7"]
+            [lein-heroku "0.5.3"]]
   :hooks [leiningen.cljsbuild]
   :main ubihub.core
-  :target-path "target/%s"
   :uberjar-name "ubihub.jar"
   :profiles {:uberjar {:aot :all}}
   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
