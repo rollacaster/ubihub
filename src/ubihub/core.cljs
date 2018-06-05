@@ -32,33 +32,27 @@
     ;; TODO Handle ws error
     (throw (js/Error. "Websocket connection failed!"))))
 
-(defn send!
-  [msg]
+(defn send! [msg]
   (if @ws-chan
     (.send @ws-chan msg)
     (throw (js/Error. "Websocket is not available!"))))
 
-(defn remove-shopping-item
-  [goodId]
+(defn remove-shopping-item [goodId]
   (send! {:type :remove-shopping-item :uuid goodId}))
 
-(defn increase-quantity
-  [goodId]
+(defn increase-quantity [goodId]
   (send! {:type :increase-quantity :uuid goodId}))
 
-(defn decrease-quantity
-  [goodId]
+(defn decrease-quantity [goodId]
   (send! {:type :decrease-quantity :uuid goodId}))
 
-(defn toogle-goods-modal
-  []
+(defn toogle-goods-modal []
   (js/scrollTo 0 0)
   (swap! add-goods-modal-shown? not))
 
 ;; -------------------------
 ;; Views
-(defn quantity-counter
-  [open uuid quantity]
+(defn quantity-counter [open uuid quantity]
   [:div {:class "relative"}
    [:button {:class (str "f4 db pointer outline-0 " font " ba " border " ph3 br3 bg-" secondary)
              :id "counter-button"
@@ -95,8 +89,7 @@
    [:button {:class (str "f6 br-pill b db pa2 dim ba b--black-20 bg-" primary " " font-secondary)
              :on-click #(increase-quantity uuid)} name]])
 
-(defn add-goods-modal
-  [goods open]
+(defn add-goods-modal [goods open]
   [:div
    {:class (str "w-100 vh-100 bg-" secondary " absolute flex-column justify-between ")
     :style {:transform (str "translateX(" (if @add-goods-modal-shown? 0 375) "px)")
@@ -112,8 +105,7 @@
             (when (= open category) [:ul (map good goods)])])
          goods)]])
 
-(defn add-button
-  [goods]
+(defn add-button [goods]
   (when (> (count goods) 0)
     [:div {:class "fixed bottom-0 right-0 ma3"}
      [:button {:class (str "f2 br-100 h3 w3 mb2 " font-secondary " bg-" primary " shadow-5")
