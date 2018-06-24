@@ -23,13 +23,17 @@
   :profiles {:uberjar {:aot :all}}
   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
   :min-lein-version "2.7.1"
-  :cljsbuild {
-    :builds [{:id "dev"
-             :source-paths ["src"]
+  :cljsbuild
+  {:builds {:dev
+            {:source-paths ["src"]
              :figwheel true
              :compiler {:main "ubihub.core"
                         :asset-path "out"
-                        :output-to "resources/public/main.js"
-                        :output-dir "resources/public/out"}}]
-  }
+                        :output-to "resources/public/main.js"}}
+            :prod
+            {:source-paths ["src"]
+             :compiler {:main "ubihub.core"
+                        :asset-path "out"
+                        :output-to "resources/public/bundle.js"
+                        :optimizations :advanced}}}}
   :heroku {:process-types { "web" "java -jar target/ubihub.jar" }})
