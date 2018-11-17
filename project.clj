@@ -15,8 +15,7 @@
                  [fogus/ring-edn "0.3.0"]
                  [http-kit "2.2.0"]]
   :plugins [[lein-figwheel "0.5.16-SNAPSHOT"]
-            [lein-cljsbuild "1.1.7"]
-            [lein-heroku "0.5.3"]]
+            [lein-cljsbuild "1.1.7"]]
   :hooks [leiningen.cljsbuild]
   :main ubihub.core
   :uberjar-name "ubihub.jar"
@@ -29,11 +28,12 @@
              :figwheel true
              :compiler {:main "ubihub.core"
                         :asset-path "out"
-                        :output-to "resources/public/main.js"}}
+                        :output-to "resources/public/main.js"
+                        :output-dir "resources/public/dev"}}
             :prod
             {:source-paths ["src"]
              :compiler {:main "ubihub.core"
                         :asset-path "out"
                         :output-to "resources/public/bundle.js"
-                        :optimizations :advanced}}}}
-  :heroku {:process-types { "web" "java -jar target/ubihub.jar" }})
+                        :optimizations :advanced
+                        :output-dir "resources/public/prod"}}}})
