@@ -9,7 +9,8 @@
             [ring.middleware.file :refer [wrap-file]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [ubihub.actions :refer [init]]))
+            [ubihub.actions :refer [init]]
+            [environ.core :refer [env]]))
 
 ;; Denormalization
 
@@ -118,5 +119,6 @@
       (wrap-edn-params)
       (wrap-resource "public")))
 
-(defn -main [& args]
-  (run-server (wrap-reload #'app) {:port (Integer/parseInt (or (System/getenv "PORT") "3000"))}))
+(defn -main [& [port]]
+  (let [port (Integer. (or port (env :port) 3000))]
+    (run-server (wrap-reload #'app) {:port port})))

@@ -11,4 +11,6 @@ pom.xml.asc
 .hg/
 /resources/public/*.js
 /figwheel_server.log
-/resources/public/out
+/resources/
+.rebel_readline_history
+.nrepl-history
