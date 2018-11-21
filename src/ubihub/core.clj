@@ -1,16 +1,17 @@
 (ns ubihub.core
   (:gen-class)
-  (:require [compojure.core :refer :all]
-            [compojure.handler :refer [site]]
+  (:require [clojure.java.io :as io]
+            [compojure.core :refer :all]
             [compojure.route :as route]
-            [org.httpkit.server :refer [send! run-server with-channel on-close on-receive]]
-            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+            [environ.core :refer [env]]
+            [org.httpkit.server
+             :refer
+             [on-close on-receive run-server send! with-channel]]
+            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]
             [ring.middleware.edn :refer [wrap-edn-params]]
-            [ring.middleware.file :refer [wrap-file]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [ubihub.actions :refer [init]]
-            [environ.core :refer [env]]))
+            [ubihub.actions :refer [init]]))
 
 ;; Denormalization
 
@@ -111,6 +112,9 @@
 
 (defroutes app-routes
   (GET "/ws" [] ws-handler)
+  (GET "/" [] (fn [req] {:status 200
+                         :headers {"Content-Type" "text/html; charset=utf-8"}
+                         :body (io/file "resources/public/index.html")}))
   (route/not-found "<h1>Page not found!!!!</h1>"))
 
 (def app
