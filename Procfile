@@ -1,1 +1,0 @@
-web: java $JVM_OPTS -cp target/ubihub.jar clojure.main -m ubihub.core

@@ -1,0 +1,12 @@
+{:deps {com.bhauman/figwheel-main {:mvn/version "0.2.0"}
+        com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}
+        reagent {:mvn/version "0.8.1"}
+        org.clojure/core.async {:mvn/version "0.4.490"}
+        ring/ring-core {:mvn/version "1.6.3"}
+        ring/ring-devel {:mvn/version "1.6.3"}
+        ring/ring-defaults {:mvn/version "0.3.1"}
+        compojure {:mvn/version "1.6.1"}
+        fogus/ring-edn {:mvn/version "0.3.0"}
+        http-kit {:mvn/version "2.2.0"}
+        environ {:mvn/version "1.0.0"}}
+ :paths ["src" "target" "resources"]}

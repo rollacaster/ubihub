@@ -11,7 +11,7 @@
             [ring.middleware.edn :refer [wrap-edn-params]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [ubihub.actions :refer [init]]))
+            [ubihub.backend.actions :refer [init]]))
 
 ;; Denormalization
 
@@ -123,6 +123,13 @@
       (wrap-edn-params)
       (wrap-resource "public")))
 
+(defonce server (atom nil))
+
+(defn stop-server []
+  (when-not (nil? @server)
+    (@server :timeout 100)
+    (reset! server nil)))
+
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 3000))]
-    (run-server (wrap-reload #'app) {:port port})))
+    (reset! server (run-server (wrap-reload #'app) {:port port}))))
