@@ -1,4 +1,4 @@
-(ns ubihub.core
+(ns ubihub.backend.core
   (:gen-class)
   (:require [clojure.java.io :as io]
             [compojure.core :refer :all]

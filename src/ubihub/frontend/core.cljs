@@ -75,12 +75,11 @@
 
 (defn shopping-item
   [open-counter {:keys [uuid name quantity]}]
-  [:li {:key uuid :className (str "flex items-center lh-copy pv3 bb " border)}
+  [:li {:key uuid :class (str "flex items-center lh-copy pv3 bb " border)}
    (quantity-counter (= uuid open-counter) uuid quantity )
-   [:label {:for uuid :className (str "f4 db " font " pl2 flex-auto")} name]
-   [:div {:className (str "w2 h2 bg-" primary " " font-secondary " br2 shadow-5")}
-    [:ion-icon {:name "checkmark" :className "f3" :style {:transform "translateX(4px)"}
-                :on-click #(remove-shopping-item uuid)}]]])
+   [:label {:for uuid :class (str "f4 db " font " pl2 flex-auto")} name]
+   [:div {:class (str "w2 h2 bg-" primary " " font-secondary " br2 shadow-5")}
+    [:ion-icon {:name "checkmark" :class "w3 h3" :on-click #(remove-shopping-item uuid)}]]])
 
 (defn good [{:keys [uuid name]}]
   [:li {:className (str "dib mr1 mb2 " font-secondary) :key uuid}
