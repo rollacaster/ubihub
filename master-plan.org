@@ -1,0 +1,17 @@
+* DONE Disallow quantity zero
+* DONE Gather goods
+* DONE categories
+* rework ui
+
+#+DOWNLOADED: /tmp/screenshot.png @ 2018-05-28 18:39:00
+[[file:rework ui/screenshot_2018-05-28_18-39-00.png]]
+#+DOWNLOADED: /tmp/screenshot.png @ 2018-05-28 18:39:08
+[[file:rework ui/screenshot_2018-05-28_18-39-08.png]]
+* Order categories
+* Deploy
+* offline
+* Security
+* Persistence
+* Add goods
+* Add categories
+* publish
